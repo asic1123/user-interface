@@ -20,6 +20,8 @@ export default {
         (contract) => contract.contractChain === this.chainId
       );
 
+      console.log("this.chainId", this.chainId);
+
       if (!chainMasterContract) {
         console.log("No master Contract");
         return false;

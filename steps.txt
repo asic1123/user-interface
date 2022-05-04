@@ -18,3 +18,100 @@ https://www.youtube.com/watch?v=USjZcfj8yxE
 https://www.youtube.com/watch?v=wrb7Gge9yoE
      
 
+======================================================================================================================
+For pools array loading:
+utils/contracts/master.js: contractChain 0x1 changed to 0x539 
+utils/contracts/pools.js:  contractChain 0x1 changed to 0x539
+this method fail because app will read eth mainnet contract's data, using local blockchain will cause run time error.
+======================================================================================================================
+
+Take adding collateral process as an example: 
+using eth mainnet directly, in BorrowRepayComponent.vue line 90: :enabled="actionBtnText === 'Nothing to do'", force 
+app generate payload data. 
+
+note: pay special attention to these functions
+actionHandler(),addCollateralHandler(data), this.cookAddCollateral(data, isApprowed)
+this.$emit("addCollateral", payload);
+
+Pool.vue line 1611 to 1821: async cookAddCollateral({amount, updatePrice }, isApprowed) {}
+  if (updatePrice) {
+          const updateEncode = this.getUpdateRateEncode();
+          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+            [11, 20, 10],
+            [0, 0, 0],
+            [updateEncode, depositEncode, colateralEncode],
+            {
+              value: 0,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
+          );
+
+          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+          console.log("gasLimit:", gasLimit);
+          const result = await this.pool.contractInstance.cook(
+            [11, 20, 10],
+            [0, 0, 0],
+            [updateEncode, depositEncode, colateralEncode],
+            {
+              value: 0,
+              // gasPrice,
+              gasLimit,
+            }
+          );
+          console.log(result);
+          return false;
+  }
+
+  const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+          [20, 10],
+          [0, 0],
+          [depositEncode, colateralEncode],
+          {
+            value: 0,
+            // gasPrice,
+            // gasLimit: 1000000,
+          }
+        );
+
+  const gasLimit = this.gasLimitConst + +estimateGas.toString();
+  console.log("gasLimit:", gasLimit);
+  const result = await this.pool.contractInstance.cook(
+          [20, 10],
+          [0, 0],
+          [depositEncode, colateralEncode],
+          {
+            value: 0,
+            // gasPrice,
+            gasLimit,
+          }
+        );
+
+  console.log(result);
+  return false;
+
+The this.pool.contractInstance.cook() API is the final function interact with blockchain contracts(CauldronV2Flat)
+master contract name: ben2box
+
+   getDepositEncode(amount) {
+      return this.$ethers.utils.defaultAbiCoder.encode(
+        ["address", "address", "int256", "int256"],
+        [this.pool.token.address, this.account, amount, "0"]
+      );
+    },
+   getAddCollateralEncode() {
+      return this.$ethers.utils.defaultAbiCoder.encode(
+        ["int256", "address", "bool"],
+        ["-2", this.account, false]
+      );
+    },
+   getUpdateRateEncode() {
+      return this.$ethers.utils.defaultAbiCoder.encode(
+        ["bool", "uint256", "uint256"],
+        [true, "0x00", "0x00"]
+      );
+    },
+=======================================================================================================================
+
+
+

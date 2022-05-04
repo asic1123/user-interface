@@ -87,7 +87,7 @@
       <button
         class="btn action-btn"
         @click="actionHandler"
-        :disabled="actionBtnText === 'Nothing to do'"
+        :enabled="actionBtnText === 'Nothing to do'"
       >
         {{ actionBtnText }}
       </button>
@@ -437,6 +437,9 @@ export default {
             amount: parsedAmount,
             updatePrice: this.updatePrice,
           };
+
+          console.log("payloaddddddd", payload);
+
           this.$emit("addCollateral", payload);
         }
         if (this.actionType === "repay") {
