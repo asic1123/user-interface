@@ -7,4 +7,14 @@ for git operation:
 (6) git add steps.txt
 (7) git commit -m "commit a steps document for description steps"
 (8) git status
+(9) git remote add origin https://github.com/asic1123/user-interface.git
+(9) git push -u origin main
+
+check out previous version of code:
+(1) git checkout commit_hash
+
+see:
+https://www.youtube.com/watch?v=USjZcfj8yxE 
+https://www.youtube.com/watch?v=wrb7Gge9yoE
+     
 
