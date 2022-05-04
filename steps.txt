@@ -1,0 +1,10 @@
+for git operation:
+(1) git clone https://github.com/asic1123/user-interface.git
+(2) git status
+(3) git config --global user.name "eric"
+(4) git config --global user.email "eric@163.com"
+(5) touch steps.txt
+(6) git add steps.txt
+(7) git commit -m "commit a steps document for description steps"
+(8) git status
+
